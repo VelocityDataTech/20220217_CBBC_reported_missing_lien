@@ -4,6 +4,7 @@
 library(readr)
 library(here)
 library(dplyr)
+library(gt)
 
 ###########################################
 
@@ -186,6 +187,30 @@ specific_SecuredParties_2022_01_31 <- filter(SecuredParties_2022_01_31, X1 == "2
      colnames(WhenDoesItAppear) <- c("1-31-22","2-7-22","2-14-22","3-14-22")
 
     WhenDoesItAppear
+
+
+    df1 <- specific_Debtors_debtorname_2022_01_31 %>%
+      select(X1) %>%
+      add_row(X1 = "")
+    df2 <- specific_Debtors_debtorname_2022_02_07 %>%
+      select(X1)
+    df3 <- specific_Debtors_debtorname_2022_02_14 %>%
+      select(X1)
+    df4 <- specific_Debtors_debtorname_2022_03_14 %>%
+      select(X1)
+    phillips_hardy <- cbind(df1, df2, df3, df4)
+    colnames(phillips_hardy) <- c("MOSOS DF 1-31-22","MOSOS DF 2-7-22","MOSOS DF 2-14-22","MOSOS DF 3-14-22")
+
+    phillips_hardy
+
+    phillips_hardy_lien_just_before_2_2_22 <- filter(filings_2022_03_14, X1 == "202106070003004837")
+    phillips_hardy_first_lien <- filter(filings_2022_03_14, X1 == "1309062773400" | X1 == "1309062773511")
+
+    table <- rbind(phillips_hardy_first_lien, phillips_hardy_lien_just_before_2_2_22)
+    colnames(table) <- c("UCC1 #","UCC1 Date/Time","?","LienType","Current Filing #","Lapse Date", "??")
+    table <- table %>%
+      gt()
+    table
 
 ###################
 #return options to default
