@@ -31,6 +31,8 @@ SecuredParties_2022_03_14 <- read_csv(file = here("UCCDataFullComma_2022_03_14",
      saveRDS(SecuredParties_2022_03_14, file = here("output_data","SecuredParties_2022_03_14.rds"))
 
 specific_filing_UCC1_2022_03_14 <- filter(filings_2022_03_14, X1 == "20220202001792923")
+colnames(specific_filing_UCC1_2022_03_14) <-
+  c("CurrentFilingNumber","FilingDateTime","FilingType","AltFilingTypeID","OriginalFileNO","LapseDate", "PageCount")
      saveRDS(specific_filing_UCC1_2022_03_14, file = here("output_data","specific_filing_UCC1_2022_03_14.rds"))
 specific_filing_ucc3_2022_03_14 <- filter(filings_2022_03_14, X5 == "20220202001792923")
      saveRDS(specific_filing_ucc3_2022_03_14, file = here("output_data","specific_filing_ucc3_2022_03_14.rds"))
@@ -207,7 +209,7 @@ specific_SecuredParties_2022_01_31 <- filter(SecuredParties_2022_01_31, X1 == "2
     phillips_hardy_first_lien <- filter(filings_2022_03_14, X1 == "1309062773400" | X1 == "1309062773511")
 
     table <- rbind(phillips_hardy_first_lien, phillips_hardy_lien_just_before_2_2_22)
-    colnames(table) <- c("UCC1 #","UCC1 Date/Time","?","LienType","Current Filing #","Lapse Date", "??")
+    colnames(table) <- c("CurrentFilingNumber","FilingDateTime","FilingType","AltFilingTypeID","OriginalFileNO","LapseDate", "PageCount")
     table <- table %>%
       gt()
     table
@@ -216,6 +218,26 @@ specific_SecuredParties_2022_01_31 <- filter(SecuredParties_2022_01_31, X1 == "2
 #return options to default
 options("scipen"=0, "digits"=7)
 ran2
+
+
+MatchingFileNo <- filter(filings_2022_03_14, X3 == "Initial")
+MatchingFileNo <- MatchingFileNo %>%
+  dplyr::filter(X2 >= as.POSIXct("2022-03-07"))
+colnames(MatchingFileNo) <-
+  c("CurrentFilingNumber","FilingDateTime","FilingType","AltFilingTypeID","OriginalFileNO","LapseDate", "PageCount")
+
+library(magrittr)
+library(dplyr)
+
+MatchingFileNo <- MatchingFileNo %>% mutate("DoTheNumbersMatch" = ifelse(CurrentFilingNumber == OriginalFileNO, "Match","No Match"))
+
+HowManyMatch <- MatchingFileNo %>% count(DoTheNumbersMatch)
+
+DoTheNumbersMatch$Match <- "Yes"
+MatchingFileNo$Match
+
+
+
 
 
 
